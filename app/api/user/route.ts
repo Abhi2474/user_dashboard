@@ -1,37 +1,23 @@
-import User from "../../../model/user";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { DefaultArgs } from "@prisma/client/runtime/library";
 import { NextResponse } from "next/server";
-import dbConnect from "@/config/dbConnect";
 
-
-export const POST = async (req: Request, res: Response) => {
-	const { username, email, password } = req.body
-	console.log('object -1 passwed');
-	try {
-		console.log('object -1 passwed');
-
-		await dbConnect()
-		const newUser = await User.create({ username, email, password });
-		NextResponse.json(newUser);
-	} catch (error) {
-		console.log(error);
-		throw new Error('error')
-	}
-}
+const prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs> = new PrismaClient()
 
 
 export const GET = async (req: Request, res: Response) => {
-	let documents;
 
 	try {
-		await dbConnect().then(() => {
-			documents = User.find().sort({ _id: -1 });
-
+		// const findUser = await prisma.user.findMany()
+		const createUser = await prisma.education.create({
+			data: { college: 'REC Ambedkar Nagar', course_name: 'BTECH' }
 		})
-
+		return NextResponse.json(createUser)
 	} catch (error) {
 		console.log(error);
 		return
 	}
 
-	return NextResponse.json(documents);
 }
+
+
